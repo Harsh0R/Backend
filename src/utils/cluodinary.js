@@ -3,10 +3,6 @@ import fs from "fs";
 import dotenv from "dotenv";
 dotenv.config();
 
-console.log(process.env.CLOUDINARY_CLOUD_NAME);
-console.log(process.env.CLOUDINARY_API_KEY);
-console.log(process.env.CLOUDINARY_API_SECRET);
-
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -16,13 +12,19 @@ cloudinary.config({
 
 const uploadOnCloudinary = async (localFilePath) => {
     try {
+
+      console.log("Uploading to Cloudinary..." , localFilePath);
+      
         if (!localFilePath) {
             return null;
         }
-        cloudinary.uploader.upload(localFilePath, {
+
+        const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto",
         });
         console.log("Uploaded to Cloudinary Successfully!!✨" , response.url);
+
+        // fs.unlinkSync(localFilePath);
         return response;
         
     } catch (error) {
@@ -32,12 +34,5 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 };
 
-cloudinary.uploader.upload(
-  "https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",
-  { public_id: "olympic_flag" },
-  function (error, result) {
-    console.log(result);
-  },
-);
 
 export { uploadOnCloudinary };
